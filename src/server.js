@@ -1,10 +1,15 @@
 import dotenv from "dotenv";
 import express from "express";
 import http from "http";
+import cors from "cors";
 import { Server } from "socket.io";
+import aiRouter from "./routes/ai.js";
 
 dotenv.config();
 const app = express();
+app.use(cors());
+app.use(express.json());
+app.use("/ai", aiRouter);
 
 const server = http.createServer(app);
 const io = new Server(server, {
