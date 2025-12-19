@@ -18,22 +18,21 @@ const io = new Server(server, {
 
 const rooms = {};
 io.on('connection', socket => {
-    socket.on('join-room', (roomId, userId) => {
-        console.log('roomId #', roomId, '\nuserId #', userId);
+    socket.on('join-room', (roomId, user) => {
+        console.log('roomId #', roomId, '\nuserId #', user.userId);
         if (!rooms[roomId]) {
             rooms[roomId] = []
         }
-        rooms[roomId].push(userId);
+        rooms[roomId].push(user);
 
         socket.join(roomId);
 
-        socket.emit("all-users", rooms[roomId].filter(id => id !== userId));
-
-        socket.to(roomId).emit('user-connected', userId);
+        socket.emit("all-users", rooms[roomId].filter(u => u.userId !== user.userId));
+        socket.to(roomId).emit('user-connected', user.userId);
 
         socket.on('disconnect', () => {
-            rooms[roomId] = rooms[roomId].filter(id => id !== userId)
-            socket.to(roomId).emit('user-disconnected', userId);
+            rooms[roomId] = rooms[roomId].filter(u => u.userId !== user.userId)
+            socket.to(roomId).emit('user-disconnected', user.userId);
         })
     })
 })
