@@ -18,6 +18,11 @@ const io = new Server(server, {
 
 const rooms = {};
 io.on('connection', socket => {
+    socket.on('end-meeting', (room) => {
+        console.log('Meeting ended in room:', room);
+        socket.to(room).emit('meeting-ended');
+    });
+
     socket.on('join-room', (roomId, user) => {
         console.log('roomId #', roomId, '\nuserId #', user.userId);
         if (!rooms[roomId]) {
