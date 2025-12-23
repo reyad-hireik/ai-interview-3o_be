@@ -33,11 +33,12 @@ io.on('connection', socket => {
         socket.join(roomId);
 
         socket.emit("all-users", rooms[roomId].filter(u => u.userId !== user.userId));
-        socket.to(roomId).emit('user-connected', user.userId);
+        socket.to(roomId).emit('user-connected', user);
 
         socket.on('disconnect', () => {
+            console.log('user-disconnected', user);
             rooms[roomId] = rooms[roomId].filter(u => u.userId !== user.userId)
-            socket.to(roomId).emit('user-disconnected', user.userId);
+            socket.to(roomId).emit('user-disconnected', user);
         })
     })
 })
